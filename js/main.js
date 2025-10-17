@@ -16,74 +16,62 @@ var gameData = {
     currentJob: null,
     currentSkill: null,
     currentProperty: null,
-    currentMisc: null,
-}
-
-var tempData = {}
-
-var skillWithLowestMaxXp = null
-
-const autoPromoteElement = document.getElementById("autoPromote")
-const autoLearnElement = document.getElementById("autoLearn")
-
-const updateSpeed = 20
-
-const baseLifespan = 365 * 70
-
-const baseGameSpeed = 4
-
-const permanentUnlocks = ["Scheduling", "Shop", "Automation", "Quick task display"]
-
-const jobBaseData = {
-    "Beggar": {name: "Beggar", maxXp: 50, income: 5},
-    "Farmer": {name: "Farmer", maxXp: 100, income: 9},
-    "Fisherman": {name: "Fisherman", maxXp: 200, income: 15},
-    "Miner": {name: "Miner", maxXp: 400, income: 40},
-    "Blacksmith": {name: "Blacksmith", maxXp: 800, income: 80},
-    "Merchant": {name: "Merchant", maxXp: 1600, income: 150},
-
-    "Squire": {name: "Squire", maxXp: 100, income: 5},
-    "Footman": {name: "Footman", maxXp: 1000, income: 50},
-    "Veteran footman": {name: "Veteran footman", maxXp: 10000, income: 120},
-    "Knight": {name: "Knight", maxXp: 100000, income: 300},
-    "Veteran knight": {name: "Veteran knight", maxXp: 1000000, income: 1000},
-    "Elite knight": {name: "Elite knight", maxXp: 7500000, income: 3000},
-    "Holy knight": {name: "Holy knight", maxXp: 40000000, income: 15000},
-    "Legendary knight": {name: "Legendary knight", maxXp: 150000000, income: 50000},
-
-    "Student": {name: "Student", maxXp: 100000, income: 100},
-    "Apprentice mage": {name: "Apprentice mage", maxXp: 1000000, income: 1000},
-    "Mage": {name: "Mage", maxXp: 10000000, income: 7500},
-    "Wizard": {name: "Wizard", maxXp: 100000000, income: 50000},
-    "Master wizard": {name: "Master wizard", maxXp: 10000000000, income: 250000},
-    "Chairman": {name: "Chairman", maxXp: 1000000000000, income: 1000000},
-}
+    currentMisc: null
+};
+var tempData = {};
+var skillWithLowestMaxXp = null;
+const autoPromoteElement = document.getElementById("autoPromote");
+const autoLearnElement = document.getElementById("autoLearn");
+const updateSpeed = 20;
+const baseLifespan = 365 * 70;
+const baseGameSpeed = 4;
+const permanentUnlocks = ["Scheduling", "Shop", "Automation", "Quick task display"];
+// ...existing code...
 
 const skillBaseData = {
+    // Fundamentals
     "Concentration": {name: "Concentration", maxXp: 100, effect: 0.01, description: "Skill xp"},
     "Productivity": {name: "Productivity", maxXp: 100, effect: 0.01, description: "Job xp"},
     "Bargaining": {name: "Bargaining", maxXp: 100, effect: -0.01, description: "Expenses"},
     "Meditation": {name: "Meditation", maxXp: 100, effect: 0.01, description: "Happiness"},
-
+    // Combat
     "Strength": {name: "Strength", maxXp: 100, effect: 0.01, description: "Military pay"},
     "Battle tactics": {name: "Battle tactics", maxXp: 100, effect: 0.01, description: "Military xp"},
     "Muscle memory": {name: "Muscle memory", maxXp: 100, effect: 0.01, description: "Strength xp"},
-
+    // Magic
     "Mana control": {name: "Mana control", maxXp: 100, effect: 0.01, description: "T.A.A. xp"},
     "Immortality": {name: "Immortality", maxXp: 100, effect: 0.01, description: "Longer lifespan"},
     "Time warping": {name: "Time warping", maxXp: 100, effect: 0.01, description: "Gamespeed"},
     "Super immortality": {name: "Super immortality", maxXp: 100, effect: 0.01, description: "Longer lifespan"},
-
+    // Dark
     "Dark influence": {name: "Dark influence", maxXp: 100, effect: 0.01, description: "All xp"},
     "Evil control": {name: "Evil control", maxXp: 100, effect: 0.01, description: "Evil gain"},
     "Intimidation": {name: "Intimidation", maxXp: 100, effect: -0.01, description: "Expenses"},
     "Demon training": {name: "Demon training", maxXp: 100, effect: 0.01, description: "All xp"},
     "Blood meditation": {name: "Blood meditation", maxXp: 100, effect: 0.01, description: "Evil gain"},
     "Demon's wealth": {name: "Demon's wealth", maxXp: 100, effect: 0.002, description: "Job pay"},
-    
+    // New Skills
+    "Alchemy": {name: "Alchemy", maxXp: 120, effect: 0.01, description: "Potion crafting"},
+    "Herbalism": {name: "Herbalism", maxXp: 80, effect: 0.01, description: "Find rare herbs"},
+    "Cooking": {name: "Cooking", maxXp: 90, effect: 0.01, description: "Food buffs"},
+    "Leadership": {name: "Leadership", maxXp: 150, effect: 0.02, description: "Boosts all job xp"},
+    "Engineering": {name: "Engineering", maxXp: 200, effect: 0.02, description: "Tech jobs xp"},
+    "Enchanting": {name: "Enchanting", maxXp: 120, effect: 0.01, description: "Magic item power"},
+    "Thievery": {name: "Thievery", maxXp: 80, effect: 0.01, description: "Steal coins"},
+    "Animal Handling": {name: "Animal Handling", maxXp: 100, effect: 0.01, description: "Pet power"},
+    "Fishing": {name: "Fishing", maxXp: 60, effect: 0.01, description: "Fish more"},
+    "Mining": {name: "Mining", maxXp: 100, effect: 0.01, description: "Ore yield"},
+    "Smithing": {name: "Smithing", maxXp: 120, effect: 0.01, description: "Forge gear"},
+    "Archery": {name: "Archery", maxXp: 100, effect: 0.01, description: "Ranged combat"},
+    "Swordsmanship": {name: "Swordsmanship", maxXp: 100, effect: 0.01, description: "Melee combat"},
+    "Magic Theory": {name: "Magic Theory", maxXp: 200, effect: 0.02, description: "All magic xp"},
+    "Divination": {name: "Divination", maxXp: 80, effect: 0.01, description: "See events"},
+    "Luck": {name: "Luck", maxXp: 100, effect: 0.01, description: "Random events"},
+    "Pet Mastery": {name: "Pet Mastery", maxXp: 100, effect: 0.01, description: "Pet bonuses"},
 }
 
 const itemBaseData = {
+    // Properties
     "Homeless": {name: "Homeless", expense: 0, effect: 1},
     "Tent": {name: "Tent", expense: 15, effect: 1.4},
     "Wooden hut": {name: "Wooden hut", expense: 100, effect: 2},
@@ -92,7 +80,7 @@ const itemBaseData = {
     "Large house": {name: "Large house", expense: 25000, effect: 12},
     "Small palace": {name: "Small palace", expense: 300000, effect: 25},
     "Grand palace": {name: "Grand palace", expense: 5000000, effect: 60},
-
+    // Shop/Misc
     "Book": {name: "Book", expense: 10, effect: 1.5, description: "Skill xp"},
     "Dumbbells": {name: "Dumbbells", expense: 50, effect: 1.5, description: "Strength xp"},
     "Personal squire": {name: "Personal squire", expense: 200, effect: 2, description: "Job xp"},
@@ -101,100 +89,226 @@ const itemBaseData = {
     "Sapphire charm": {name: "Sapphire charm", expense: 50000, effect: 3, description: "Magic xp"},
     "Study desk": {name: "Study desk", expense: 1000000, effect: 2, description: "Skill xp"},
     "Library": {name: "Library", expense: 10000000, effect: 1.5, description: "Skill xp"},
+    // New Items
+    "Potion Kit": {name: "Potion Kit", expense: 500, effect: 1.2, description: "Alchemy xp"},
+    "Fishing Rod": {name: "Fishing Rod", expense: 200, effect: 1.2, description: "Fishing xp"},
+    "Pickaxe": {name: "Pickaxe", expense: 300, effect: 1.2, description: "Mining xp"},
+    "Forge": {name: "Forge", expense: 2000, effect: 1.3, description: "Smithing xp"},
+    "Bow": {name: "Bow", expense: 800, effect: 1.2, description: "Archery xp"},
+    "Sword": {name: "Sword", expense: 800, effect: 1.2, description: "Swordsmanship xp"},
+    "Pet Collar": {name: "Pet Collar", expense: 1000, effect: 1.2, description: "Pet power"},
+    "Lucky Charm": {name: "Lucky Charm", expense: 5000, effect: 1.2, description: "Luck xp"},
+    "Crystal Ball": {name: "Crystal Ball", expense: 20000, effect: 1.2, description: "Divination xp"},
+    "Enchanter's Tools": {name: "Enchanter's Tools", expense: 15000, effect: 1.2, description: "Enchanting xp"},
+    "Chef's Set": {name: "Chef's Set", expense: 1200, effect: 1.2, description: "Cooking xp"},
+    "Leadership Medal": {name: "Leadership Medal", expense: 25000, effect: 1.2, description: "Leadership xp"},
+    "Pet House": {name: "Pet House", expense: 20000, effect: 1.2, description: "Pet bonuses"},
 }
 
-const jobCategories = {
-    "Common work": ["Beggar", "Farmer", "Fisherman", "Miner", "Blacksmith", "Merchant"],
-    "Military" : ["Squire", "Footman", "Veteran footman", "Knight", "Veteran knight", "Elite knight", "Holy knight", "Legendary knight"],
-    "The Arcane Association" : ["Student", "Apprentice mage", "Mage", "Wizard", "Master wizard", "Chairman"]
-}
+const jobBaseData = {
+    // Common
+    "Beggar": {name: "Beggar", maxXp: 50, income: 5},
+    "Street Musician": {name: "Street Musician", maxXp: 80, income: 8},
+    "Farmer": {name: "Farmer", maxXp: 100, income: 9},
+    "Fisherman": {name: "Fisherman", maxXp: 200, income: 15},
+    "Hunter": {name: "Hunter", maxXp: 300, income: 22},
+    "Miner": {name: "Miner", maxXp: 400, income: 40},
+    "Blacksmith": {name: "Blacksmith", maxXp: 800, income: 80},
+    "Carpenter": {name: "Carpenter", maxXp: 1200, income: 120},
+    "Merchant": {name: "Merchant", maxXp: 1600, income: 150},
+    "Innkeeper": {name: "Innkeeper", maxXp: 2500, income: 300},
+    "Baker": {name: "Baker", maxXp: 1800, income: 110},
+    "Tailor": {name: "Tailor", maxXp: 2200, income: 140},
+    "Apothecary": {name: "Apothecary", maxXp: 3000, income: 200},
+    "Scribe": {name: "Scribe", maxXp: 3500, income: 210},
+    "Artist": {name: "Artist", maxXp: 4000, income: 250},
+    // Military
+    "Squire": {name: "Squire", maxXp: 100, income: 5},
+    "Footman": {name: "Footman", maxXp: 1000, income: 50},
+    "Veteran footman": {name: "Veteran footman", maxXp: 10000, income: 120},
+    "Knight": {name: "Knight", maxXp: 100000, income: 300},
+    "Veteran knight": {name: "Veteran knight", maxXp: 1000000, income: 1000},
+    "Elite knight": {name: "Elite knight", maxXp: 7500000, income: 3000},
+    "Holy knight": {name: "Holy knight", maxXp: 40000000, income: 15000},
+    "Legendary knight": {name: "Legendary knight", maxXp: 150000000, income: 50000},
+    "Commander": {name: "Commander", maxXp: 500000000, income: 200000},
+    // Arcane
+    "Student": {name: "Student", maxXp: 100000, income: 100},
+    "Apprentice mage": {name: "Apprentice mage", maxXp: 1000000, income: 1000},
+    "Mage": {name: "Mage", maxXp: 10000000, income: 7500},
+    "Wizard": {name: "Wizard", maxXp: 100000000, income: 50000},
+    "Master wizard": {name: "Master wizard", maxXp: 10000000000, income: 250000},
+    "Archmage": {name: "Archmage", maxXp: 100000000000, income: 1200000},
+    "Chairman": {name: "Chairman", maxXp: 1000000000000, income: 1000000},
+    // Tech/Innovation
+    "Engineer": {name: "Engineer", maxXp: 20000, income: 900},
+    "Inventor": {name: "Inventor", maxXp: 120000, income: 8000},
+    "Guildmaster": {name: "Guildmaster", maxXp: 2000000, income: 75000},
+    "Noble": {name: "Noble", maxXp: 10000000, income: 500000},
+    "King": {name: "King", maxXp: 100000000, income: 2000000},
+    // Legendary/Fantasy
+    "Dragon Rider": {name: "Dragon Rider", maxXp: 1000000000, income: 10000000},
+    "Celestial Sage": {name: "Celestial Sage", maxXp: 5000000000, income: 50000000},
+    "Time Traveler": {name: "Time Traveler", maxXp: 10000000000, income: 100000000},
 
-const skillCategories = {
-    "Fundamentals": ["Concentration", "Productivity", "Bargaining", "Meditation"],
-    "Combat": ["Strength", "Battle tactics", "Muscle memory"],
-    "Magic": ["Mana control", "Immortality", "Time warping", "Super immortality"],
-    "Dark magic": ["Dark influence", "Evil control", "Intimidation", "Demon training", "Blood meditation", "Demon's wealth"]
-}
+    // Modern Professions
+    "Software Developer": {name: "Software Developer", maxXp: 20000, income: 1200},
+    "Data Scientist": {name: "Data Scientist", maxXp: 30000, income: 2000},
+    "Doctor": {name: "Doctor", maxXp: 50000, income: 3000},
+    "Lawyer": {name: "Lawyer", maxXp: 40000, income: 2500},
+    "Architect": {name: "Architect", maxXp: 35000, income: 2200},
+    "Chef": {name: "Chef", maxXp: 25000, income: 1500},
+    "Musician": {name: "Musician", maxXp: 18000, income: 1000},
+    "Athlete": {name: "Athlete", maxXp: 22000, income: 1800},
+    "Pilot": {name: "Pilot", maxXp: 30000, income: 2200},
+    "Astronaut": {name: "Astronaut", maxXp: 100000, income: 10000},
 
-const itemCategories = {
-    "Properties": ["Homeless", "Tent", "Wooden hut", "Cottage", "House", "Large house", "Small palace", "Grand palace"],
-    "Misc": ["Book", "Dumbbells", "Personal squire", "Steel longsword", "Butler", "Sapphire charm", "Study desk", "Library"]
-}
+    // Science & Tech
+    "Biologist": {name: "Biologist", maxXp: 18000, income: 900},
+    "Physicist": {name: "Physicist", maxXp: 25000, income: 1200},
+    "Chemist": {name: "Chemist", maxXp: 20000, income: 1100},
+    "Mathematician": {name: "Mathematician", maxXp: 22000, income: 1200},
+    "Roboticist": {name: "Roboticist", maxXp: 35000, income: 2500},
+    "AI Researcher": {name: "AI Researcher", maxXp: 40000, income: 3000},
 
-const headerRowColors = {
-    "Common work": "#55a630",
-    "Military": "#e63946",
-    "The Arcane Association": "#C71585",
-    "Fundamentals": "#4a4e69",
-    "Combat": "#ff704d",
-    "Magic": "#875F9A",
-    "Dark magic": "#73000f",
-    "Properties": "#219ebc",
-    "Misc": "#b56576",
+    // Fantasy/Mythology
+    "Necromancer": {name: "Necromancer", maxXp: 20000000, income: 90000},
+    "Beastmaster": {name: "Beastmaster", maxXp: 5000000, income: 40000},
+    "Druid": {name: "Druid", maxXp: 8000000, income: 60000},
+    "Paladin": {name: "Paladin", maxXp: 20000000, income: 100000},
+    "Berserker": {name: "Berserker", maxXp: 12000000, income: 80000},
+    "Elementalist": {name: "Elementalist", maxXp: 15000000, income: 85000},
+    "Shadow Assassin": {name: "Shadow Assassin", maxXp: 10000000, income: 70000},
+    "Summoner": {name: "Summoner", maxXp: 12000000, income: 80000},
+    "Priest": {name: "Priest", maxXp: 6000000, income: 35000},
+    "Oracle": {name: "Oracle", maxXp: 9000000, income: 50000},
+
+    // Ancient/Legendary
+    "Philosopher": {name: "Philosopher", maxXp: 20000, income: 1000},
+    "Alchemist": {name: "Alchemist", maxXp: 25000, income: 1200},
+    "Gladiator": {name: "Gladiator", maxXp: 15000, income: 900},
+    "Samurai": {name: "Samurai", maxXp: 20000, income: 1200},
+    "Viking": {name: "Viking", maxXp: 18000, income: 1100},
+    "Spartan": {name: "Spartan", maxXp: 22000, income: 1300},
+    "Pharaoh": {name: "Pharaoh", maxXp: 50000, income: 4000},
+    "Emperor": {name: "Emperor", maxXp: 100000, income: 10000},
+
+    // Esportes/Entretenimento
+    "Footballer": {name: "Footballer", maxXp: 20000, income: 2000},
+    "Basketball Player": {name: "Basketball Player", maxXp: 20000, income: 2000},
+    "Actor": {name: "Actor", maxXp: 25000, income: 2500},
+    "Streamer": {name: "Streamer", maxXp: 15000, income: 1200},
+    "Youtuber": {name: "Youtuber", maxXp: 15000, income: 1200},
+    "Influencer": {name: "Influencer", maxXp: 12000, income: 1000},
+
+    // Outras profissões e fantasia
+    "Detective": {name: "Detective", maxXp: 18000, income: 1100},
+    "Spy": {name: "Spy", maxXp: 22000, income: 1300},
+    "Explorer": {name: "Explorer", maxXp: 25000, income: 1500},
+    "Pirate": {name: "Pirate", maxXp: 20000, income: 1200},
+    "Merchant Prince": {name: "Merchant Prince", maxXp: 50000, income: 5000},
+    "Warlord": {name: "Warlord", maxXp: 100000, income: 20000},
+    "Monster Hunter": {name: "Monster Hunter", maxXp: 30000, income: 3000},
+    "Treasure Hunter": {name: "Treasure Hunter", maxXp: 25000, income: 2000},
+    "Space Marine": {name: "Space Marine", maxXp: 100000, income: 10000},
+    "Time Guardian": {name: "Time Guardian", maxXp: 20000000000, income: 200000000},
+    "Godslayer": {name: "Godslayer", maxXp: 100000000000, income: 1000000000},
+    "World Shaper": {name: "World Shaper", maxXp: 1000000000000, income: 10000000000},
 }
 
 const tooltips = {
-    "Beggar": "Struggle day and night for a couple of copper coins. It feels like you are at the brink of death each day.",
-    "Farmer": "Plow the fields and grow the crops. It's not much but it's honest work.",
-    "Fisherman": "Reel in various fish and sell them for a handful of coins. A relaxing but still a poor paying job.",
-    "Miner": "Delve into dangerous caverns and mine valuable ores. The pay is quite meager compared to the risk involved.",
-    "Blacksmith": "Smelt ores and carefully forge weapons for the military. A respectable and OK paying commoner job.",
-    "Merchant": "Travel from town to town, bartering fine goods. The job pays decently well and is a lot less manually-intensive.",
+    // New skills
+    "Alchemy": "Brew potions and elixirs for various effects.",
+    "Herbalism": "Gather rare herbs and plants for alchemy.",
+    "Cooking": "Prepare delicious meals that grant buffs.",
+    "Leadership": "Inspire others and boost all job experience.",
+    "Engineering": "Invent and improve machines and tech.",
+    "Enchanting": "Imbue items with magical properties.",
+    "Thievery": "Steal coins and valuables with finesse.",
+    "Animal Handling": "Train and care for pets and companions.",
+    "Fishing": "Catch fish for food and trade.",
+    "Mining": "Extract valuable ores from the earth.",
+    "Smithing": "Forge powerful weapons and armor.",
+    "Archery": "Master the bow for ranged combat.",
+    "Swordsmanship": "Excel in melee combat with swords.",
+    "Magic Theory": "Understand the deep laws of magic.",
+    "Divination": "Foresee future events and gain insight.",
+    "Luck": "Increase the chance of random events.",
+    "Pet Mastery": "Unlock special bonuses from pets.",
+    // New items
+    "Potion Kit": "A set of tools for brewing potions.",
+    "Fishing Rod": "Essential for catching fish.",
+    "Pickaxe": "Used to mine ores and gems.",
+    "Forge": "A smith's best friend for forging gear.",
+    "Bow": "A finely crafted bow for archery.",
+    "Sword": "A sharp blade for swordsmanship.",
+    "Pet Collar": "Boosts your pet's power.",
+    "Lucky Charm": "Increases your luck in all things.",
+    "Crystal Ball": "See glimpses of the future.",
+    "Enchanter's Tools": "For enchanting items with magic.",
+    "Chef's Set": "Cook meals with greater effects.",
+    "Leadership Medal": "Proof of your inspiring leadership.",
+    "Pet House": "A cozy home for your companions."
+}
+// --- Achievements System ---
+const achievements = [
+    { name: "First Steps", desc: "Reach level 10 in any job." },
+    { name: "Skillful", desc: "Reach level 10 in any skill." },
+    { name: "Wealthy", desc: "Accumulate 1,000,000 coins." },
+    { name: "Pet Lover", desc: "Unlock your first pet." },
+    { name: "Master of All", desc: "Reach level 100 in every job and skill." },
+    { name: "Legend", desc: "Unlock a legendary job." },
+    { name: "Shopaholic", desc: "Buy every item in the shop." },
+    { name: "Eventful", desc: "Trigger 10 random events." },
+]
+let unlockedAchievements = []
 
-    "Squire": "Carry around your knight's shield and sword along the battlefield. Very meager pay but the work experience is quite valuable.",
-    "Footman": "Put down your life to battle with enemy soldiers. A courageous, respectable job but you are still worthless in the grand scheme of things.",
-    "Veteran footman": "More experienced and useful than the average footman, take out the enemy forces in battle with your might. The pay is not that bad.",
-    "Knight": "Slash and pierce through enemy soldiers with ease, while covered in steel from head to toe. A decently paying and very respectable job.",
-    "Veteran knight": "Utilising your unmatched combat ability, slaugher enemies effortlessly. Most footmen in the military would never be able to acquire such a well paying job like this.",
-    "Elite knight": "Obliterate squadrons of enemy soldiers in one go with extraordinary proficiency, while equipped with the finest gear. Such a feared unit on the battlefield is paid extremely well.",
-    "Holy knight": "Collapse entire armies in mere seconds with your magically imbued blade. The handful of elite knights who attain this level of power are showered with coins.",
-    "Legendary knight": "Feared worldwide, obliterate entire nations in a blink of an eye. Roughly every century, only one holy knight is worthy of receiving such an esteemed title.",
+function checkAchievements() {
+    // Example logic, expand as needed
+    if (!unlockedAchievements.includes("First Steps") && Object.values(gameData.taskData).some(t => t.level >= 10 && t instanceof Job)) {
+        unlockedAchievements.push("First Steps")
+        alert("Achievement unlocked: First Steps!")
+    }
+    // ...add more checks for other achievements
+}
 
-    "Student": "Study the theory of mana and practice basic spells. There is minor pay to cover living costs, however, this is a necessary stage in becoming a mage.",
-    "Apprentice mage": "Under the supervision of a mage, perform basic spells against enemies in battle. Generous pay will be provided to cover living costs.",
-    "Mage": "Turn the tides of battle through casting intermediate spells and mentor other apprentices. The pay for this particular job is extremely high.",
-    "Wizard": "Utilise advanced spells to ravage and destroy entire legions of enemy soldiers. Only a small percentage of mages deserve to attain this role and are rewarded with an insanely high pay.",
-    "Master wizard": "Blessed with unparalleled talent, perform unbelievable feats with magic at will. It is said that a master wizard has enough destructive power to wipe an empire off the map.",
-    "Chairman": "Spend your days administrating The Arcane Association and investigate the concepts of true immortality. The chairman receives ludicrous amounts of pay daily.",
+// --- Random Events System ---
+const randomEvents = [
+    { name: "Found Treasure", effect: () => { gameData.coins += 10000; }, desc: "You found a hidden stash of coins!" },
+    { name: "Pet Joins", effect: () => { unlockPet("Dog"); }, desc: "A loyal dog joins you!" },
+    { name: "Lucky Day", effect: () => { addGlobalXpMultiplier(2); setTimeout(() => removeGlobalXpMultiplier(2), 60000); }, desc: "XP gain doubled for 1 minute!" },
+    { name: "Mysterious Merchant", effect: () => { gameData.coins += 50000; }, desc: "A merchant gifts you coins." },
+]
+function triggerRandomEvent() {
+    const event = randomEvents[Math.floor(Math.random() * randomEvents.length)]
+    event.effect()
+    alert("Random Event: " + event.name + " - " + event.desc)
+}
 
-    "Concentration": "Improve your learning speed through practising intense concentration activities.",
-    "Productivity": "Learn to procrastinate less at work and receive more job experience per day.",
-    "Bargaining": "Study the tricks of the trade and persuasive skills to lower any type of expense.",
-    "Meditation": "Fill your mind with peace and tranquility to tap into greater happiness from within.",
-
-    "Strength": "Condition your body and strength through harsh training. Stronger individuals are paid more in the military.",
-    "Battle tactics": "Create and revise battle strategies, improving experience gained in the military.",
-    "Muscle memory": "Strengthen your neurons through habit and repetition, improving strength gains throughout the body.",
-
-    "Mana control": "Strengthen your mana channels throughout your body, aiding you in becoming a more powerful magical user.",
-    "Immortality": "Lengthen your lifespan through the means of magic. However, is this truly the immortality you have tried seeking for...?",
-    "Time warping": "Bend space and time through forbidden techniques, resulting in a faster gamespeed.",
-    "Super immortality": "Through harnessing ancient, forbidden techniques, lengthen your lifespan drastically beyond comprehension.",
-
-    "Dark influence": "Encompass yourself with formidable power bestowed upon you by evil, allowing you to pick up and absorb any job or skill with ease.",
-    "Evil control": "Tame the raging and growing evil within you, improving evil gain in-between rebirths.",
-    "Intimidation": "Learn to emit a devilish aura which strikes extreme fear into other merchants, forcing them to give you heavy discounts.",
-    "Demon training": "A mere human body is too feeble and weak to withstand evil. Train with forbidden methods to slowly manifest into a demon, capable of absorbing knowledge rapidly.",
-    "Blood meditation": "Grow and culture the evil within you through the sacrifise of other living beings, drastically increasing evil gain.",
-    "Demon's wealth": "Through the means of dark magic, multiply the raw matter of the coins you receive from your job.",
-
-    "Homeless": "Sleep on the uncomfortable, filthy streets while almost freezing to death every night. It cannot get any worse than this.",
-    "Tent": "A thin sheet of tattered cloth held up by a couple of feeble, wooden sticks. Horrible living conditions but at least you have a roof over your head.",
-    "Wooden hut": "Shabby logs and dirty hay glued together with horse manure. Much more sturdy than a tent, however, the stench isn't very pleasant.",
-    "Cottage": "Structured with a timber frame and a thatched roof. Provides decent living conditions for a fair price.",
-    "House": "A building formed from stone bricks and sturdy timber, which contains a few rooms. Although quite expensive, it is a comfortable abode.",
-    "Large house": "Much larger than a regular house, which boasts even more rooms and multiple floors. The building is quite spacious but comes with a hefty price tag.",
-    "Small palace": "A very rich and meticulously built structure rimmed with fine metals such as silver. Extremely high expenses to maintain for a lavish lifestyle.",
-    "Grand palace": "A grand residence completely composed of gold and silver. Provides the utmost luxurious and comfortable living conditions possible for a ludicrous price.",
-
-    "Book": "A place to write down all your thoughts and discoveries, allowing you to learn a lot more quickly.",
-    "Dumbbells": "Heavy tools used in strenuous exercise to toughen up and accumulate strength even faster than before. ",
-    "Personal squire": "Assists you in completing day to day activities, giving you more time to be productive at work.",
-    "Steel longsword": "A fine blade used to slay enemies even quicker in combat and therefore gain more experience.",
-    "Butler": "Keeps your household clean at all times and also prepares three delicious meals per day, leaving you in a happier, stress-free mood.",
-    "Sapphire charm": "Embedded with a rare sapphire, this charm activates more mana channels within your body, providing a much easier time learning magic.",
-    "Study desk": "A dedicated area which provides many fine stationary and equipment designed for furthering your progress in research.",
-    "Library": "Stores a collection of books, each containing vast amounts of information from basic life skills to complex magic spells.",
+// --- Pets/Companions System ---
+const pets = {
+    "Dog": { name: "Dog", bonus: () => 1.1, desc: "A loyal companion. Increases happiness." },
+    "Cat": { name: "Cat", bonus: () => 1.05, desc: "Independent but brings luck." },
+    "Falcon": { name: "Falcon", bonus: () => 1.2, desc: "Sharp eyes, helps in hunting." },
+    "Dragonling": { name: "Dragonling", bonus: () => 1.5, desc: "Tiny dragon, huge power." },
+}
+let ownedPets = []
+let activePet = null
+function unlockPet(petName) {
+    if (!ownedPets.includes(petName)) {
+        ownedPets.push(petName)
+        alert("Pet unlocked: " + petName)
+    }
+}
+function setActivePet(petName) {
+    if (ownedPets.includes(petName)) {
+        activePet = petName
+        alert("Active pet: " + petName)
+    }
+}
+function getPetBonus() {
+    if (activePet && pets[activePet]) return pets[activePet].bonus()
+    return 1
 }
 
 const units = ["", "k", "M", "B", "T", "q", "Q", "Sx", "Sp", "Oc"];
@@ -294,7 +408,8 @@ function setCustomEffects() {
 function getHappiness() {
     var meditationEffect = getBindedTaskEffect("Meditation")
     var butlerEffect = getBindedItemEffect("Butler")
-    var happiness = meditationEffect() * butlerEffect() * gameData.currentProperty.getEffect()
+    var petBonus = getPetBonus()
+    var happiness = meditationEffect() * butlerEffect() * gameData.currentProperty.getEffect() * petBonus
     return happiness
 }
 
@@ -1033,6 +1148,11 @@ function update() {
     doCurrentTask(gameData.currentJob)
     doCurrentTask(gameData.currentSkill)
     applyExpenses()
+    // Trigger random event occasionally
+    if (Math.random() < 0.001 * (1 + (gameData.taskData["Luck"] ? gameData.taskData["Luck"].level / 100 : 0))) {
+        triggerRandomEvent()
+    }
+    checkAchievements()
     updateUI()
 }
 
