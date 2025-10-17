@@ -8,7 +8,7 @@ var gameData = {
     paused: false,
     timeWarpingEnabled: true,
     // global multipliers applied to all XP gains (can be functions or numbers)
-    globalXpMultipliers: [10,3],
+    globalXpMultipliers: [50,10],
 
     rebirthOneCount: 0,
     rebirthTwoCount: 0,
