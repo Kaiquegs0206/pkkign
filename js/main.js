@@ -1176,3 +1176,7 @@ setInterval(setSkillWithLowestMaxXp, 1000)
 // Example: stack two global xp multipliers for testing
 // addGlobalXpMultiplier(2) // flat x2
 // addGlobalXpMultiplier(function() { return 1 + gameData.rebirthOneCount * 0.1 }) // dynamic multiplier
+
+// Developer-requested: multiply only XP gain by 10000 (does NOT change XP required for level)
+// This is a numeric multiplier, so it will persist in saves.
+addGlobalXpMultiplier(10000)
