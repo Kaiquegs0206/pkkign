@@ -25,7 +25,13 @@ class Task {
     }
 
     getXpGain() {
-        return applyMultipliers(10, this.xpMultipliers)
+        // combine task-specific xp multipliers with any global xp multipliers
+        var multipliers = []
+        if (Array.isArray(gameData.globalXpMultipliers)) {
+            multipliers = multipliers.concat(gameData.globalXpMultipliers)
+        }
+        multipliers = multipliers.concat(this.xpMultipliers)
+        return applyMultipliers(10, multipliers)
     }
 
     increaseXp() {

@@ -7,6 +7,8 @@ var gameData = {
     evil: 0,
     paused: false,
     timeWarpingEnabled: true,
+    // global multipliers applied to all XP gains (can be functions or numbers)
+    globalXpMultipliers: [10,3],
 
     rebirthOneCount: 0,
     rebirthTwoCount: 0,
@@ -302,9 +304,12 @@ function getEvil() {
 
 function applyMultipliers(value, multipliers) {
     var finalMultiplier = 1
-    multipliers.forEach(function(multiplierFunction) {
-        var multiplier = multiplierFunction()
-        finalMultiplier *= multiplier
+    multipliers.forEach(function(multiplier) {
+        // multiplier can be a function that returns a number, or a numeric value
+        var m = typeof multiplier === "function" ? multiplier() : multiplier
+        // ignore invalid multipliers
+        if (typeof m !== "number" || isNaN(m)) return
+        finalMultiplier *= m
     })
     var finalValue = Math.round(value * finalMultiplier)
     return finalValue
@@ -826,6 +831,17 @@ function getTaskElement(taskName) {
     return element
 }
 
+// Helpers to manage global XP multipliers
+function addGlobalXpMultiplier(mult) {
+    // mult can be a number (e.g., 2) or a function returning a number
+    gameData.globalXpMultipliers.push(mult)
+}
+
+function removeGlobalXpMultiplier(mult) {
+    var idx = gameData.globalXpMultipliers.indexOf(mult)
+    if (idx >= 0) gameData.globalXpMultipliers.splice(idx, 1)
+}
+
 function getItemElement(itemName) {
     var item = gameData.itemData[itemName]
     var element = document.getElementById(item.id)
@@ -1156,3 +1172,7 @@ update()
 setInterval(update, 1000 / updateSpeed)
 setInterval(saveGameData, 3000)
 setInterval(setSkillWithLowestMaxXp, 1000)
+
+// Example: stack two global xp multipliers for testing
+// addGlobalXpMultiplier(2) // flat x2
+// addGlobalXpMultiplier(function() { return 1 + gameData.rebirthOneCount * 0.1 }) // dynamic multiplier
